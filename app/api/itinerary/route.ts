@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getCurrentUser } from "@/lib/auth";
 import { createItinerary } from "@/lib/rag";
+import { tripOrigins } from "@/lib/data";
 
 export const maxDuration = 60;
 
@@ -9,6 +10,7 @@ const itinerarySchema = z.object({
   days: z.number().int().min(1).max(21),
   budget: z.number().int().min(1000).max(10000000),
   interests: z.string().trim().min(2).max(250),
+  startLocation: z.string().refine((id) => tripOrigins.some((origin) => origin.id === id)),
 });
 
 export async function POST(request: Request) {
@@ -16,7 +18,7 @@ export async function POST(request: Request) {
   const parsed = itinerarySchema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ error: "Add a duration, budget and a few interests." }, { status: 400 });
   try {
-    return NextResponse.json(await createItinerary(parsed.data.days, parsed.data.budget, parsed.data.interests));
+    return NextResponse.json(await createItinerary(parsed.data.days, parsed.data.budget, parsed.data.interests, parsed.data.startLocation));
   } catch (error) {
     console.error("Itinerary request failed:", error);
     return NextResponse.json({ error: error instanceof Error ? error.message : "The planner is unavailable right now." }, { status: 503 });

@@ -2,7 +2,10 @@ import type { Metadata } from "next";
 import { SiteHeader } from "@/components/site-header";
 import { DestinationBrowser } from "@/components/destination-browser";
 
-export const metadata: Metadata = { title: "Places | Rehnuma GB" };
+export const metadata: Metadata = {
+  title: "Places | Rahnuma GB",
+  description: "Explore travel guides for the valleys, lakes and high country of Gilgit-Baltistan, including Hunza, Skardu, Yasin and Ishkoman.",
+};
 
 export default async function DestinationsPage({ searchParams }: { searchParams: Promise<{ search?: string }> }) {
   const { search = "" } = await searchParams;

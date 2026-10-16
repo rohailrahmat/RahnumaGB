@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 import { SiteHeader } from "@/components/site-header";
 import { destinations, getDestinationImage, guides } from "@/lib/data";
 import { formatPKR } from "@/lib/data";
+import { getOpenStreetMapEmbedUrl, getOpenStreetMapLocationUrl } from "@/lib/map";
 
 export function generateStaticParams() {
   return destinations.map((destination) => ({ id: destination.id }));
@@ -14,7 +15,9 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params;
   const destination = destinations.find((item) => item.id === id);
-  return { title: destination ? `${destination.name} | Rehnuma GB` : "Place | Rehnuma GB" };
+  return destination
+    ? { title: `${destination.name} | Rahnuma GB`, description: destination.overview }
+    : { title: "Place", description: "Explore destinations across Gilgit-Baltistan with Rahnuma GB." };
 }
 
 export default async function DestinationPage({ params }: { params: Promise<{ id: string }> }) {
@@ -43,6 +46,21 @@ export default async function DestinationPage({ params }: { params: Promise<{ id
           <div><Compass size={18} /><span>BEST SEASON</span><strong>{destination.best_season}</strong></div>
           <div><MapPin size={18} /><span>DAILY ESTIMATE</span><strong>PKR {formatPKR(destination.cost_per_day_pkr)}</strong></div>
         </div>
+      </section>
+      <section className="place-map-section page-width">
+        <div className="place-map-heading">
+          <div><div className="eyebrow"><span className="eyebrow-dot" /> GET YOUR BEARINGS</div><h2>Find {destination.name}<br /><em>on the map.</em></h2></div>
+          <a href={getOpenStreetMapLocationUrl(destination)} target="_blank" rel="noreferrer">Open larger map <ArrowUpRight size={15} /></a>
+        </div>
+        <div className="place-map-frame">
+          <iframe
+            src={getOpenStreetMapEmbedUrl(destination)}
+            title={`OpenStreetMap showing ${destination.name}`}
+            loading="lazy"
+            referrerPolicy="strict-origin-when-cross-origin"
+          />
+        </div>
+        <p className="map-attribution">Map data © OpenStreetMap contributors. The pin marks the approximate destination location.</p>
       </section>
       <section className="place-details page-width">
         <div className="place-detail-block"><span className="detail-index">01 / GETTING THERE</span><h2>The way in.</h2><p>{destination.how_to_reach}</p></div>

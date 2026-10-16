@@ -26,6 +26,7 @@ export function AuthForm({ mode }: { mode: "login" | "register" }) {
       setBusy(false);
       return;
     }
+    window.dispatchEvent(new Event("rehnuma-auth-change"));
     router.push("/assistant");
     router.refresh();
   }

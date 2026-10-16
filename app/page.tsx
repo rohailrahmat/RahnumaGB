@@ -5,7 +5,7 @@ import { SiteHeader } from "@/components/site-header";
 import { destinations, getDestinationImage } from "@/lib/data";
 import { formatPKR } from "@/lib/data";
 
-const featured = ["hunza", "skardu", "fairy-meadows", "deosai"]
+const featured = ["hunza", "skardu", "yasin", "ishkoman"]
   .map((id) => destinations.find((destination) => destination.id === id))
   .filter((destination) => destination !== undefined);
 
@@ -13,13 +13,13 @@ export default function HomePage() {
   return (
     <>
       <SiteHeader />
-      <main>
+      <main id="top">
         <section className="hero">
-          <Image className="hero-image" src="/static/images/hero.jpg" alt="Cherry blossoms and the Karakoram mountains above a river valley" fill priority loading="eager" sizes="100vw" />
+          <Image className="hero-image" src="/static/images/hero.webp" alt="Cherry blossoms and the Karakoram mountains above a river valley" fill priority loading="eager" sizes="100vw" />
           <div className="hero-scrim" />
           <div className="hero-content page-width">
             <div className="eyebrow eyebrow-light"><span className="eyebrow-dot" /> THE NORTHERN FRONTIER, WELL FOUND</div>
-            <h1>Rehnuma <em>GB</em></h1>
+            <h1>Rahnuma <em>GB</em></h1>
             <p className="hero-lede">Find your way into the mountains.</p>
             <p className="hero-description">Local knowledge for the landscapes that stay with you.</p>
             <form className="hero-search" action="/destinations" method="get">
@@ -78,13 +78,25 @@ export default function HomePage() {
           <div className="planner-number">01<span> / 03</span></div>
         </section>
 
-        <footer className="site-footer page-width">
-          <Link className="brand-lockup" href="/">
-            <span className="brand-mark"><Mountain size={18} strokeWidth={1.8} /></span>
-            <span className="brand-copy"><strong>rehnuma</strong><small>GILGIT–BALTISTAN</small></span>
-          </Link>
-          <p>Made with respect for the mountains and the people who call them home.</p>
-          <span>© 2026 REHNUMA GB</span>
+        <footer className="site-footer">
+          <div className="footer-inner page-width">
+            <div className="footer-brand">
+              <Link className="brand-lockup" href="/" aria-label="Rahnuma GB home">
+                <Image className="brand-mark" src="/static/rehnuma-mark.webp?v=2" alt="" width={40} height={40} unoptimized />
+                <span className="brand-copy"><strong>RAHNUMA</strong><small>GILGIT–BALTISTAN</small></span>
+              </Link>
+              <p>Local knowledge for the landscapes that stay with you. Made with respect for the mountains and the people who call them home.</p>
+            </div>
+            <nav className="footer-links" aria-label="Explore Rahnuma">
+              <div><strong>Explore</strong><Link href="/destinations">Destinations</Link><Link href="/guides">Local guides</Link><Link href="/planner">Trip planner</Link></div>
+              <div><strong>Your journey</strong><Link href="/assistant">Ask Rahnuma</Link><Link href="/login">Sign in</Link><Link href="/register">Create an account</Link></div>
+            </nav>
+            <div className="footer-bottom">
+              <span>© {new Date().getFullYear()} RAHNUMA GB</span>
+              <span>TRAVEL THOUGHTFULLY · GILGIT–BALTISTAN, PAKISTAN</span>
+              <Link href="#top">Back to top ↑</Link>
+            </div>
+          </div>
         </footer>
       </main>
     </>

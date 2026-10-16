@@ -41,6 +41,11 @@ async function createSchema(sql: DatabaseSql) {
     password_hash text NOT NULL,
     created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
   )`;
+  await sql`CREATE TABLE IF NOT EXISTS user_preferences (
+    user_id text PRIMARY KEY REFERENCES app_users(id) ON DELETE CASCADE,
+    trip_updates INTEGER NOT NULL DEFAULT 1,
+    safety_alerts INTEGER NOT NULL DEFAULT 1
+  )`;
   await sql`CREATE TABLE IF NOT EXISTS chat_sessions (
     id text PRIMARY KEY,
     user_id text NOT NULL REFERENCES app_users(id) ON DELETE CASCADE,

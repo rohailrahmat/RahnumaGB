@@ -42,15 +42,11 @@ export async function getCurrentUser() {
   const token = (await cookies()).get(SESSION_COOKIE)?.value;
   if (!token) return null;
 
-  try {
-    const { payload } = await jwtVerify(token, secretKey());
-    if (!payload.sub) return null;
-    await ensureSchema();
-    const users = await getSql()`SELECT id, name, email, created_at FROM app_users WHERE id = ${payload.sub} LIMIT 1`;
-    return users[0] ?? null;
-  } catch {
-    return null;
-  }
+  const verified = await jwtVerify(token, secretKey()).catch(() => null);
+  if (!verified?.payload.sub) return null;
+  await ensureSchema();
+  const users = await getSql()`SELECT id, name, email, created_at FROM app_users WHERE id = ${verified.payload.sub} LIMIT 1`;
+  return users[0] ?? null;
 }
 
 export const sessionCookieOptions = {

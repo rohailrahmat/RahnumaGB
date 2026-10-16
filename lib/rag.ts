@@ -1,13 +1,14 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { GoogleGenAI } from "@google/genai";
-import { destinations, guides } from "@/lib/data";
+import { destinations, guides, tripOrigins } from "@/lib/data";
 import type { ChatMessage, Destination, Guide } from "@/lib/types";
+import { z } from "zod";
 
 type IndexChunk = { dest: string; type?: string; guide_id?: string; section?: string; text: string; hidden?: boolean; vec: number[] };
 type Pin = Pick<Destination, "id" | "name" | "lat" | "lng">;
 
-const SYSTEM = `You are Rehnuma, a concise travel guide for Gilgit-Baltistan, Pakistan. Answer directly and warmly. Use the supplied verified context for destinations, routes, seasons, altitude, safety, and PKR costs; do not invent facts or prices. If a question is outside the region, say so briefly. Recommend a named guide only when asked about guides, booking, transport, or a route that requires one. Keep replies scannable and practical.`;
+const SYSTEM = `You are Rahnuma, a concise travel guide for Gilgit-Baltistan, Pakistan. Answer directly and warmly. Use the supplied verified context for destinations, routes, seasons, altitude, safety, and PKR costs; do not invent facts or prices. If a question is outside the region, say so briefly. Recommend a named guide only when asked about guides, booking, transport, or a route that requires one. Keep replies scannable and practical.`;
 const generationModels = ["gemini-3.8-flash", "gemini-3.7-flash", "gemini-3.6-flash", "gemini-flash-lite-latest"];
 const guideIntent = /guide|driver|jeep|book|contact|whatsapp|hire|operator|porter/i;
 let indexPromise: Promise<IndexChunk[]> | undefined;
@@ -99,20 +100,44 @@ export async function answerTravelQuestion(query: string, history: ChatMessage[]
   const chunks = await retrieve(query);
   const related = relatedItems(chunks, query);
   const context = chunks.map((chunk) => `[${chunk.dest}/${chunk.section ?? "data"}] ${chunk.text}`).join("\n\n");
-  const conversation = history.slice(-8).map((message) => `${message.role === "user" ? "Traveler" : "Rehnuma"}: ${message.content}`).join("\n");
+  const conversation = history.slice(-8).map((message) => `${message.role === "user" ? "Traveler" : "Rahnuma"}: ${message.content}`).join("\n");
   const text = await generate(`${conversation ? `Recent conversation:\n${conversation}\n\n` : ""}Verified regional knowledge:\n${context || "No destination records matched."}\n\nTraveler question: ${query}\n\nAnswer directly using the verified context. If a guide is relevant, use only the guide details below.\n${related.guides.slice(0, 3).map((guide: Guide) => `${guide.name}, ${guide.company}; WhatsApp ${guide.whatsapp}; ${guide.region}; ${guide.license}`).join("\n")}`);
   return { text, ...related };
 }
 
-export async function createItinerary(days: number, budget: number, interests: string) {
-  const chunks = await retrieve(`${interests} trip in Gilgit-Baltistan`, 8);
+const generatedItinerarySchema = z.object({
+  days: z.array(z.object({
+    day: z.number().int().positive(),
+    dest_id: z.string().min(1),
+    title: z.string().min(2).max(120),
+    plan: z.string().min(20).max(5000),
+    cost_pkr: z.number().int().nonnegative().nullable(),
+  })).min(1).max(21),
+  safety_note: z.string().min(1).max(1000),
+});
+
+export async function createItinerary(days: number, budget: number, interests: string, startLocationId: string) {
+  const origin = tripOrigins.find((item) => item.id === startLocationId);
+  if (!origin) throw new Error("Choose a valid starting point for your journey.");
+  const chunks = await retrieve(`${origin.name} ${interests} trip in Gilgit-Baltistan`, 8);
   const related = relatedItems(chunks, interests);
   const context = chunks.map((chunk) => `[${chunk.dest}/${chunk.section ?? "data"}] ${chunk.text}`).join("\n\n");
-  const response = await generate(`Context:\n${context}\n\nPlan a ${days}-day Gilgit-Baltistan trip for a total budget of ${budget} PKR. Interests: ${interests}. Use destinations from context only. Return JSON: {"days":[{"day":1,"dest_id":"...","title":"...","plan":"...","cost_pkr":number|null}],"safety_note":"..."}. Use null rather than inventing costs.`, true);
-  const plan = JSON.parse(response.replace(/^```(?:json)?\s*|\s*```$/g, "")) as { days?: Array<{ dest_id: string }>; safety_note?: string };
-  const pins = [...new Set((plan.days ?? []).map((day) => day.dest_id))].flatMap((id) => {
+  const response = await generate(`Context:\n${context}\n\nCreate a ${days}-day Gilgit-Baltistan itinerary for ${budget} PKR total, starting in ${origin.name}. Traveler interests: ${interests}. Use only destination IDs present in the context. Return exactly ${days} ordered day entries and keep the journey geographically coherent from the starting point. Make each day's plan practical and specific: use Markdown headings for Morning, Afternoon, Evening, and Getting around; include activities and advice grounded in the context; allow realistic rest and altitude adjustment; avoid invented opening times, road durations, hotels, restaurants, and transport prices. Keep the estimated day cost within the overall budget when possible; use null when the supplied data cannot support an estimate. Return JSON only with this shape: {"days":[{"day":1,"dest_id":"...","title":"...","plan":"## Morning\\n...\\n## Afternoon\\n...\\n## Evening\\n...\\n## Getting around\\n...","cost_pkr":number|null}],"safety_note":"..."}.`, true);
+  let parsedResponse: unknown;
+  try {
+    parsedResponse = JSON.parse(response.replace(/^```(?:json)?\s*|\s*```$/g, ""));
+  } catch {
+    throw new Error("The trip planner returned an unreadable itinerary. Please try again.");
+  }
+  const plan = generatedItinerarySchema.safeParse(parsedResponse);
+  if (!plan.success || plan.data.days.length !== days || plan.data.days.some((day, index) => day.day !== index + 1)) {
+    throw new Error("The trip planner could not create a complete day-by-day route. Please try again.");
+  }
+  const unknownDestination = plan.data.days.find((day) => !destinations.some((destination) => destination.id === day.dest_id));
+  if (unknownDestination) throw new Error("The trip planner returned an unknown destination. Please try again.");
+  const pins = [...new Set(plan.data.days.map((day) => day.dest_id))].flatMap((id) => {
     const destination = destinations.find((item) => item.id === id);
     return destination ? [{ id, name: destination.name, lat: destination.lat, lng: destination.lng }] : [];
   });
-  return { ...plan, pins, guides: related.guides.slice(0, 3) };
+  return { ...plan.data, origin, pins, guides: related.guides.slice(0, 3) };
 }

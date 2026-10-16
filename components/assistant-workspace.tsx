@@ -1,11 +1,13 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowDown, ArrowUpRight, Compass, LoaderCircle, MessageSquarePlus, Send, Trash2 } from "lucide-react";
+import { ArrowDown, ArrowUpRight, Compass, LoaderCircle, MessageSquarePlus, Send, Settings, Trash2 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { ThemeToggle } from "@/components/theme-toggle";
 import type { ChatMessage } from "@/lib/types";
 
 type Session = { id: string; title: string; updated_at: string };
@@ -61,7 +63,7 @@ export function AssistantWorkspace({ userName }: { userName: string }) {
     }
     const response = await fetch("/api/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ q: prompt, session_id: sessionId }) }).catch(() => null);
     const result = await response?.json().catch(() => ({}));
-    if (!response?.ok) setError(result?.error || "Rehnuma couldn’t answer just now.");
+    if (!response?.ok) setError(result?.error || "Rahnuma couldn’t answer just now.");
     else setMessages((current) => [...current, { role: "assistant", content: result.text, sources: result.sources, id: crypto.randomUUID() }]);
     setBusy(false);
     fetch("/api/sessions").then((item) => item.ok ? item.json() : []).then(setSessions).catch(() => undefined);
@@ -91,26 +93,27 @@ export function AssistantWorkspace({ userName }: { userName: string }) {
 
   async function signOut() {
     await fetch("/api/auth/logout", { method: "POST" });
+    window.dispatchEvent(new Event("rehnuma-auth-change"));
     router.push("/");
     router.refresh();
   }
 
   return <div className="assistant-shell">
     <aside className="assistant-sidebar">
-      <Link className="assistant-brand" href="/"><span className="brand-mark"><Compass size={18} /></span><span className="brand-copy"><strong>rehnuma</strong><small>YOUR FIELD GUIDE</small></span></Link>
+      <Link className="assistant-brand" href="/"><Image className="brand-mark" src="/static/rehnuma-mark.webp?v=2" alt="" width={32} height={32} unoptimized /><span className="brand-copy"><strong>RAHNUMA</strong><small>YOUR FIELD GUIDE</small></span></Link>
       <button className="new-chat-button" onClick={newConversation}><MessageSquarePlus size={16} /> New conversation <span>+</span></button>
       <div className="session-list-label">RECENT CONVERSATIONS</div>
       <div className="session-list">{sessions.map((session) => <div className={`session-item${activeId === session.id ? " active" : ""}`} key={session.id}><button onClick={() => selectSession(session.id)}>{session.title}</button><button className="session-delete" aria-label={`Delete ${session.title}`} onClick={() => removeSession(session.id)}><Trash2 size={14} /></button></div>)}</div>
       <div className="assistant-sidebar-bottom"><Link href="/destinations">Explore places <ArrowUpRight size={14} /></Link><button onClick={signOut}>{userName} <span>Sign out</span></button></div>
     </aside>
     <section className="assistant-main">
-      <div className="assistant-topbar"><span>REHNUMA <i /> TRAVEL DESK</span><Link href="/planner">Open trip planner <ArrowUpRight size={14} /></Link></div>
+      <div className="assistant-topbar"><span>RAHNUMA <i /> TRAVEL DESK</span><div className="assistant-topbar-actions"><ThemeToggle className="workspace-theme-toggle" /><Link href="/account" aria-label="Account settings"><Settings size={14} /><span>Settings</span></Link><Link href="/planner">Open trip planner <ArrowUpRight size={14} /></Link></div></div>
       <div className="chat-scroll">
         {!messages.length && <div className="chat-welcome"><div className="chat-welcome-mark"><Compass size={23} /></div><span className="eyebrow"><span className="eyebrow-dot" /> YOUR LOCAL FIELD GUIDE</span><h1>Where will<br /><em>the road take you?</em></h1><p>Ask about a valley, a route or the small details that make a trip work.</p><div className="prompt-list">{prompts.map((prompt) => <button key={prompt} onClick={() => sendMessage(undefined, prompt)}>{prompt}<ArrowUpRight size={14} /></button>)}</div></div>}
-        <div className="chat-messages">{messages.map((message, index) => <article className={`chat-message ${message.role}`} key={message.id ?? index}><span className="message-avatar">{message.role === "assistant" ? <Compass size={15} /> : userName.charAt(0).toUpperCase()}</span><div className="message-body"><span className="message-name">{message.role === "assistant" ? "REHNUMA" : userName.toUpperCase()}</span><div className="markdown-body"><ReactMarkdown remarkPlugins={[remarkGfm]}>{message.content}</ReactMarkdown></div>{message.sources?.length ? <div className="source-links">{message.sources.slice(0, 3).map((source) => <Link key={`${source.dest}-${source.section}`} href={`/destinations/${source.dest}`}>{source.label} <ArrowUpRight size={12} /></Link>)}</div> : null}</div></article>)}{busy && <article className="chat-message assistant"><span className="message-avatar"><Compass size={15} /></span><div className="message-body"><span className="message-name">REHNUMA</span><div className="typing-indicator"><i /><i /><i /></div></div></article>}<div ref={endRef} /></div>
+        <div className="chat-messages">{messages.map((message, index) => <article className={`chat-message ${message.role}`} key={message.id ?? index}><span className="message-avatar">{message.role === "assistant" ? <Compass size={15} /> : userName.charAt(0).toUpperCase()}</span><div className="message-body"><span className="message-name">{message.role === "assistant" ? "RAHNUMA" : userName.toUpperCase()}</span><div className="markdown-body"><ReactMarkdown remarkPlugins={[remarkGfm]}>{message.content}</ReactMarkdown></div>{message.sources?.length ? <div className="source-links">{message.sources.slice(0, 3).map((source) => <Link key={`${source.dest}-${source.section}`} href={`/destinations/${source.dest}`}>{source.label} <ArrowUpRight size={12} /></Link>)}</div> : null}</div></article>)}{busy && <article className="chat-message assistant"><span className="message-avatar"><Compass size={15} /></span><div className="message-body"><span className="message-name">RAHNUMA</span><div className="typing-indicator"><i /><i /><i /></div></div></article>}<div ref={endRef} /></div>
       </div>
       {error && <p className="chat-error" role="alert">{error}{error.includes("Sign in") && <> <Link href="/login">Sign in</Link></>}</p>}
-      <div className="chat-composer-wrap"><form className="chat-composer" onSubmit={(event) => sendMessage(event)}><label className="sr-only" htmlFor="chat-question">Ask Rehnuma</label><textarea id="chat-question" value={question} onChange={(event) => setQuestion(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter" && !event.shiftKey) { event.preventDefault(); void sendMessage(undefined); } }} placeholder="Ask about the road north…" rows={1} /><button type="submit" disabled={busy || !question.trim()} aria-label="Send question">{busy ? <LoaderCircle className="spin" size={17} /> : <Send size={17} />}</button></form><p>GROUNDED IN LOCAL KNOWLEDGE · ALWAYS CHECK CONDITIONS BEFORE YOU TRAVEL</p></div>
+      <div className="chat-composer-wrap"><form className="chat-composer" onSubmit={(event) => sendMessage(event)}><label className="sr-only" htmlFor="chat-question">Ask Rahnuma</label><textarea id="chat-question" value={question} onChange={(event) => setQuestion(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter" && !event.shiftKey) { event.preventDefault(); void sendMessage(undefined); } }} placeholder="Ask about the road north…" rows={1} /><button type="submit" disabled={busy || !question.trim()} aria-label="Send question">{busy ? <LoaderCircle className="spin" size={17} /> : <Send size={17} />}</button></form><p>GROUNDED IN LOCAL KNOWLEDGE · ALWAYS CHECK CONDITIONS BEFORE YOU TRAVEL</p></div>
     </section>
   </div>;
 }

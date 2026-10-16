@@ -2,9 +2,10 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowUpRight, Search, SlidersHorizontal } from "lucide-react";
+import { ArrowUpRight, ExternalLink, MapPin, Search, SlidersHorizontal } from "lucide-react";
 import { useMemo, useState } from "react";
 import { destinations, getDestinationImage } from "@/lib/data";
+import { getOpenStreetMapEmbedUrl, getOpenStreetMapLocationUrl } from "@/lib/map";
 import type { Destination } from "@/lib/types";
 import { formatPKR } from "@/lib/data";
 
@@ -20,6 +21,7 @@ function matchesFilter(destination: Destination, filter: string) {
 export function DestinationBrowser({ initialSearch = "" }: { initialSearch?: string }) {
   const [search, setSearch] = useState(initialSearch);
   const [filter, setFilter] = useState("All places");
+  const [selectedDestinationId, setSelectedDestinationId] = useState("");
   const results = useMemo(() => {
     const query = search.trim().toLowerCase();
     return destinations.filter((destination) => {
@@ -27,6 +29,7 @@ export function DestinationBrowser({ initialSearch = "" }: { initialSearch?: str
       return matchesSearch && matchesFilter(destination, filter);
     });
   }, [search, filter]);
+  const mapDestination = results.find((destination) => destination.id === selectedDestinationId) ?? results[0];
 
   return (
     <>
@@ -42,6 +45,27 @@ export function DestinationBrowser({ initialSearch = "" }: { initialSearch?: str
         <span className="filter-icon"><SlidersHorizontal size={14} /></span>
         {filters.map((item) => <button className={filter === item ? "filter-chip selected" : "filter-chip"} onClick={() => setFilter(item)} key={item}>{item}</button>)}
       </div>
+      {mapDestination && <section className="directory-map-panel" aria-label="Destination map">
+        <div className="directory-map-copy">
+          <span className="eyebrow"><MapPin size={13} /> FIND YOUR WAY</span>
+          <h2>Explore it <em>on the map.</em></h2>
+          <p>Search results update the map so you can see where each valley sits in Gilgit-Baltistan.</p>
+          <label htmlFor="destination-map-select">MAP SHOWING</label>
+          <select id="destination-map-select" value={mapDestination.id} onChange={(event) => setSelectedDestinationId(event.target.value)}>
+            {results.map((destination) => <option value={destination.id} key={destination.id}>{destination.name}</option>)}
+          </select>
+          <Link href={`/destinations/${mapDestination.id}`}>Open destination guide <ArrowUpRight size={14} /></Link>
+        </div>
+        <div className="destination-map-frame">
+          <iframe
+            src={getOpenStreetMapEmbedUrl(mapDestination)}
+            title={`OpenStreetMap showing ${mapDestination.name}`}
+            loading="lazy"
+            referrerPolicy="strict-origin-when-cross-origin"
+          />
+          <a href={getOpenStreetMapLocationUrl(mapDestination)} target="_blank" rel="noreferrer"><ExternalLink size={13} /> Open larger map</a>
+        </div>
+      </section>}
       {results.length ? <div className="directory-grid">
         {results.map((destination, index) => <Link className="directory-card" href={`/destinations/${destination.id}`} key={destination.id}>
           <div className="directory-image">

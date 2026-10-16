@@ -8,3 +8,4 @@ out/
 !.env.example
 data/rehnuma.sqlite*
 data/.session-secret
+northgpt.db

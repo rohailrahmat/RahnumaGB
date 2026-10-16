@@ -1,0 +1,10 @@
+.env
+__pycache__/
+node_modules/
+.next/
+out/
+*.tsbuildinfo
+.env.*
+!.env.example
+data/rehnuma.sqlite*
+data/.session-secret

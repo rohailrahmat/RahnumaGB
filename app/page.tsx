@@ -19,8 +19,8 @@ export default function HomePage() {
           <div className="hero-scrim" />
           <div className="hero-content page-width">
             <div className="eyebrow eyebrow-light"><span className="eyebrow-dot" /> THE NORTHERN FRONTIER, WELL FOUND</div>
-            <h1>Rahnuma <em>GB</em></h1>
-            <p className="hero-lede">Find your way into the mountains.</p>
+            <h1><span>Rahnuma</span><em>GB</em></h1>
+            <p className="hero-lede">Find your way into<br className="hero-mobile-break" /> the mountains.</p>
             <p className="hero-description">Local knowledge for the landscapes that stay with you.</p>
             <form className="hero-search" action="/destinations" method="get">
               <MapPin size={19} aria-hidden="true" />

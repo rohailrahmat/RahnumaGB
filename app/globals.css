@@ -87,16 +87,18 @@ button, a { -webkit-tap-highlight-color: transparent; }
 
 .hero { min-height: 680px; height: min(820px, 100svh); max-height: 880px; position: relative; color: #fff; overflow: hidden; background: var(--moss-dark); }
 .hero-image { object-fit: cover; object-position: center 54%; animation: hero-settle 1.4s cubic-bezier(.2,.7,.2,1) both; }
-.hero-scrim { position: absolute; inset: 0; background: linear-gradient(90deg, rgb(6 20 33 / 78%) 0%, rgb(7 31 44 / 54%) 39%, rgb(7 31 44 / 10%) 100%), linear-gradient(0deg, rgb(6 20 33 / 38%), transparent 43%); }
+.hero-scrim { position: absolute; inset: 0; background: linear-gradient(90deg, rgb(5 20 32 / 86%) 0%, rgb(7 31 44 / 64%) 48%, rgb(7 31 44 / 18%) 100%), linear-gradient(0deg, rgb(6 20 33 / 45%), transparent 52%); }
 .hero-content { position: relative; z-index: 2; padding-top: clamp(205px, 28vh, 285px); animation: rise-in .8s .12s both; }
 .eyebrow { display: flex; align-items: center; gap: 9px; font-size: 9px; font-weight: 700; letter-spacing: 1.55px; color: var(--muted); }
 .eyebrow-light { color: rgb(255 255 255 / 80%); }
 .eyebrow-dot { width: 7px; height: 7px; background: var(--signal); border-radius: 50%; flex: 0 0 auto; }
-.hero h1 { width: fit-content; max-width: 100%; margin: 23px 0 0; font-size: clamp(62px, 8vw, 112px); line-height: .98; letter-spacing: -.055em; font-weight: 500; text-wrap: balance; }
+.hero h1 { width: fit-content; max-width: 100%; margin: 23px 0 0; display: flex; flex-wrap: wrap; align-items: baseline; column-gap: .17em; font-size: clamp(62px, 8vw, 112px); line-height: 1.05; letter-spacing: -.055em; font-weight: 600; text-shadow: 0 3px 22px rgb(0 0 0 / 24%); }
+.hero h1 span { white-space: nowrap; }
 .hero h1 em, .intro-copy h2 em, .section-heading h2 em, .planner-copy h2 em { font-family: var(--font-display); font-weight: 400; }
-.hero h1 em { display: inline-block; white-space: nowrap; background: var(--brand-gradient); -webkit-background-clip: text; background-clip: text; color: transparent; }
-.hero-lede { margin: 19px 0 0; font-size: 22px; font-weight: 500; letter-spacing: -.3px; }
-.hero-description { margin: 4px 0 26px; color: rgb(255 255 255 / 76%); font-size: 13px; }
+.hero h1 em { display: inline-block; white-space: nowrap; background: var(--brand-gradient); -webkit-background-clip: text; background-clip: text; color: transparent; text-shadow: none; }
+.hero-mobile-break { display: none; }
+.hero-lede { max-width: 440px; margin: 19px 0 0; font-size: clamp(22px, 2.2vw, 26px); font-weight: 600; line-height: 1.32; letter-spacing: -.35px; text-shadow: 0 2px 14px rgb(0 0 0 / 38%); }
+.hero-description { max-width: 440px; margin: 7px 0 26px; color: rgb(255 255 255 / 88%); font-size: 14px; line-height: 1.65; text-shadow: 0 1px 10px rgb(0 0 0 / 35%); }
 .hero-search { width: min(505px, 100%); height: 58px; padding: 6px 6px 6px 17px; display: flex; align-items: center; gap: 12px; background: var(--paper-bright); color: var(--ink-soft); }
 .hero-search > svg { flex: 0 0 auto; color: var(--signal); }
 .hero-search input { flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; color: var(--ink); font-size: 12px; }
@@ -239,11 +241,12 @@ button, a { -webkit-tap-highlight-color: transparent; }
   .main-nav .nav-mobile-assistant { display: block; border-bottom: 0; color: var(--brand-green); font-weight: 700; }
   .hero { height: min(760px, 100svh); min-height: 640px; }
   .hero-image { object-position: 57% center; }
-  .hero-scrim { background: linear-gradient(90deg, rgb(6 20 33 / 70%), rgb(7 31 44 / 30%)), linear-gradient(0deg, rgb(6 20 33 / 44%), transparent 50%); }
+  .hero-scrim { background: linear-gradient(90deg, rgb(5 20 32 / 82%), rgb(7 31 44 / 48%)), linear-gradient(0deg, rgb(6 20 33 / 48%), transparent 52%); }
   .hero-content { padding-top: 208px; }
-  .hero h1 { max-width: 100%; margin-top: 21px; font-size: clamp(42px, 13.5vw, 88px); letter-spacing: -.06em; line-height: 1.02; }
-  .hero-lede { max-width: 280px; font-size: 19px; }
-  .hero-description { max-width: 280px; font-size: 12px; }
+  .hero h1 { margin-top: 21px; font-size: clamp(40px, 12.5vw, 68px); letter-spacing: -.055em; line-height: 1.08; }
+  .hero-mobile-break { display: initial; }
+  .hero-lede { max-width: 320px; margin-top: 18px; font-size: 20px; line-height: 1.35; }
+  .hero-description { max-width: 320px; margin-top: 7px; font-size: 13px; line-height: 1.55; }
   .hero-search { height: 55px; gap: 9px; padding-left: 12px; }
   .hero-search input { font-size: 11px; }
   .hero-search button { width: 42px; height: 43px; }

@@ -8,11 +8,13 @@ import { ArrowDown, ArrowUpRight, Compass, LoaderCircle, MessageSquarePlus, Send
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { destinations, getDestinationImage } from "@/lib/data";
 import type { ChatMessage } from "@/lib/types";
 
 type Session = { id: string; title: string; updated_at: string };
 
 const prompts = ["When is the best time for Hunza?", "How do I reach Fairy Meadows?", "A quiet 4-day route from Skardu"];
+const destinationById = new Map(destinations.map((destination) => [destination.id, destination]));
 
 export function AssistantWorkspace({ userName }: { userName: string }) {
   const router = useRouter();
@@ -107,10 +109,51 @@ export function AssistantWorkspace({ userName }: { userName: string }) {
       <div className="assistant-sidebar-bottom"><Link href="/destinations">Explore places <ArrowUpRight size={14} /></Link><button onClick={signOut}>{userName} <span>Sign out</span></button></div>
     </aside>
     <section className="assistant-main">
-      <div className="assistant-topbar"><span>RAHNUMA <i /> TRAVEL DESK</span><div className="assistant-topbar-actions"><ThemeToggle className="workspace-theme-toggle" /><Link href="/account" aria-label="Account settings"><Settings size={14} /><span>Settings</span></Link><Link href="/planner">Open trip planner <ArrowUpRight size={14} /></Link></div></div>
+      <div className="assistant-topbar">
+        <span>RAHNUMA <i /> TRAVEL DESK</span>
+        <div className="assistant-topbar-actions" role="group" aria-label="Assistant tools">
+          <ThemeToggle className="workspace-theme-toggle" />
+          <Link href="/account" aria-label="Account settings" title="Settings"><Settings size={14} /><span>Settings</span></Link>
+          <Link href="/planner" aria-label="Open trip planner" title="Open trip planner"><span>Open trip planner</span><ArrowUpRight size={14} /></Link>
+        </div>
+      </div>
       <div className="chat-scroll">
         {!messages.length && <div className="chat-welcome"><div className="chat-welcome-mark"><Compass size={23} /></div><span className="eyebrow"><span className="eyebrow-dot" /> YOUR LOCAL FIELD GUIDE</span><h1>Where will<br /><em>the road take you?</em></h1><p>Ask about a valley, a route or the small details that make a trip work.</p><div className="prompt-list">{prompts.map((prompt) => <button key={prompt} onClick={() => sendMessage(undefined, prompt)}>{prompt}<ArrowUpRight size={14} /></button>)}</div></div>}
-        <div className="chat-messages">{messages.map((message, index) => <article className={`chat-message ${message.role}`} key={message.id ?? index}><span className="message-avatar">{message.role === "assistant" ? <Compass size={15} /> : userName.charAt(0).toUpperCase()}</span><div className="message-body"><span className="message-name">{message.role === "assistant" ? "RAHNUMA" : userName.toUpperCase()}</span><div className="markdown-body"><ReactMarkdown remarkPlugins={[remarkGfm]}>{message.content}</ReactMarkdown></div>{message.sources?.length ? <div className="source-links">{message.sources.slice(0, 3).map((source) => <Link key={`${source.dest}-${source.section}`} href={`/destinations/${source.dest}`}>{source.label} <ArrowUpRight size={12} /></Link>)}</div> : null}</div></article>)}{busy && <article className="chat-message assistant"><span className="message-avatar"><Compass size={15} /></span><div className="message-body"><span className="message-name">RAHNUMA</span><div className="typing-indicator"><i /><i /><i /></div></div></article>}<div ref={endRef} /></div>
+        <div className="chat-messages">
+          {messages.map((message, index) => {
+            const sourcedDestinations = message.role === "assistant"
+              ? [...new Set(message.sources?.map((source) => source.dest) ?? [])]
+                .map((id) => destinationById.get(id))
+                .filter((destination) => destination !== undefined)
+                .slice(0, 3)
+              : [];
+
+            return (
+              <article className={`chat-message ${message.role}`} key={message.id ?? index}>
+                <span className="message-avatar">{message.role === "assistant" ? <Compass size={15} /> : userName.charAt(0).toUpperCase()}</span>
+                <div className="message-body">
+                  <span className="message-name">{message.role === "assistant" ? "RAHNUMA" : userName.toUpperCase()}</span>
+                  <div className="markdown-body"><ReactMarkdown remarkPlugins={[remarkGfm]}>{message.content}</ReactMarkdown></div>
+                  {sourcedDestinations.length > 0 && (
+                    <div className="chat-destination-images" aria-label="Related destinations">
+                      {sourcedDestinations.map((destination) => (
+                        <Link className="chat-destination-card" key={destination.id} href={`/destinations/${destination.id}`}>
+                          <span className="chat-destination-image">
+                            <Image src={getDestinationImage(destination.id)} alt="" fill sizes="(max-width: 700px) 40vw, 180px" />
+                          </span>
+                          <span className="chat-destination-name">{destination.name}<ArrowUpRight size={12} /></span>
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                  {message.sources?.length ? <div className="source-links">{message.sources.slice(0, 3).map((source) => <Link key={`${source.dest}-${source.section}`} href={`/destinations/${source.dest}`}>{source.label} <ArrowUpRight size={12} /></Link>)}</div> : null}
+                </div>
+              </article>
+            );
+          })}
+          {busy && <article className="chat-message assistant"><span className="message-avatar"><Compass size={15} /></span><div className="message-body"><span className="message-name">RAHNUMA</span><div className="typing-indicator"><i /><i /><i /></div></div></article>}
+          <div ref={endRef} />
+        </div>
       </div>
       {error && <p className="chat-error" role="alert">{error}{error.includes("Sign in") && <> <Link href="/login">Sign in</Link></>}</p>}
       <div className="chat-composer-wrap"><form className="chat-composer" onSubmit={(event) => sendMessage(event)}><label className="sr-only" htmlFor="chat-question">Ask Rahnuma</label><textarea id="chat-question" value={question} onChange={(event) => setQuestion(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter" && !event.shiftKey) { event.preventDefault(); void sendMessage(undefined); } }} placeholder="Ask about the road north…" rows={1} /><button type="submit" disabled={busy || !question.trim()} aria-label="Send question">{busy ? <LoaderCircle className="spin" size={17} /> : <Send size={17} />}</button></form><p>GROUNDED IN LOCAL KNOWLEDGE · ALWAYS CHECK CONDITIONS BEFORE YOU TRAVEL</p></div>

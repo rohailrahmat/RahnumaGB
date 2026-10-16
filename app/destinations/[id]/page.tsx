@@ -7,6 +7,7 @@ import { SiteHeader } from "@/components/site-header";
 import { destinations, getDestinationImage, guides } from "@/lib/data";
 import { formatPKR } from "@/lib/data";
 import { getOpenStreetMapEmbedUrl, getOpenStreetMapLocationUrl } from "@/lib/map";
+import { YasinExplore } from "@/components/yasin-explore";
 
 export function generateStaticParams() {
   return destinations.map((destination) => ({ id: destination.id }));
@@ -47,6 +48,7 @@ export default async function DestinationPage({ params }: { params: Promise<{ id
           <div><MapPin size={18} /><span>DAILY ESTIMATE</span><strong>PKR {formatPKR(destination.cost_per_day_pkr)}</strong></div>
         </div>
       </section>
+      {destination.id === "yasin" && <YasinExplore />}
       <section className="place-map-section page-width">
         <div className="place-map-heading">
           <div><div className="eyebrow"><span className="eyebrow-dot" /> GET YOUR BEARINGS</div><h2>Find {destination.name}<br /><em>on the map.</em></h2></div>

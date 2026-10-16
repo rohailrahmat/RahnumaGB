@@ -37,12 +37,10 @@ export function SiteHeader() {
               {link.label}
             </Link>
           ))}
-          <Link className="nav-mobile-assistant" href="/assistant" onClick={() => setMenuOpen(false)}>Ask Rahnuma <span>↗</span></Link>
         </nav>
         <div className="header-actions">
           <ThemeToggle />
           <AccountMenu />
-          <Link className="button button-dark header-cta" href="/assistant">Ask Rahnuma <span>↗</span></Link>
         </div>
         <button
           className="menu-toggle"

@@ -81,7 +81,7 @@ export function AccountMenu() {
 
   if (accountStatus === "loading") return <span className="account-loading" aria-hidden="true" />;
   if (accountStatus === "error") return <button className="account-status-error" type="button" aria-label="Account status unavailable. Retry." title="Account status unavailable. Retry." onClick={() => setRefreshKey((value) => value + 1)}><AlertCircle size={17} /></button>;
-  if (!user) return <Link className="header-signin" href="/login">Sign in</Link>;
+  if (!user) return <Link className="button button-dark header-cta" href="/register">Sign Up <span>↗</span></Link>;
 
   const initials = user.name.trim().split(/\s+/).slice(0, 2).map((part) => part[0]?.toUpperCase()).join("");
   return (

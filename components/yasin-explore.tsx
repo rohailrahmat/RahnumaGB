@@ -1,5 +1,5 @@
-import Image from "next/image";
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowUpRight, Compass, Footprints, Landmark, MapPin, Mountain, Waves } from "lucide-react";
 import highlights from "@/data/yasin-highlights.json";
 

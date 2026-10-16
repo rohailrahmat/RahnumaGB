@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowDownRight, ArrowRight, ArrowUpRight, MapPin, Mountain, MoveUpRight, Sparkles } from "lucide-react";
+import { ArrowDownRight, ArrowRight, ArrowUpRight, MapPin, MessageCircle, Mountain, MoveUpRight, Sparkles } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
 import { destinations, getDestinationImage } from "@/lib/data";
 import { formatPKR } from "@/lib/data";
@@ -25,7 +25,7 @@ export default function HomePage() {
             <form className="hero-search" action="/destinations" method="get">
               <MapPin size={19} aria-hidden="true" />
               <label className="sr-only" htmlFor="destination-search">Where do you want to go?</label>
-              <input id="destination-search" name="search" placeholder="Try Hunza, Skardu, Deosai…" />
+              <input id="destination-search" name="search" placeholder="Try Yasin, Ishkoman, Hunza, Skardu…" />
               <button type="submit" aria-label="Search destinations"><ArrowRight size={19} /></button>
             </form>
             <div className="hero-footnote"><span>35°55′ N&nbsp; 74°18′ E</span><span>GILGIT–BALTISTAN, PAKISTAN</span></div>
@@ -76,6 +76,14 @@ export default function HomePage() {
           <p>Tell us when, how far and what calls you north. We’ll help you shape the days in between.</p>
           <Link className="button button-light" href="/planner">Plan a journey <MoveUpRight size={16} /></Link>
           <div className="planner-number">01<span> / 03</span></div>
+        </section>
+
+        <section className="planner-band assistant-home-band page-width">
+          <div className="planner-mark"><MessageCircle size={32} strokeWidth={1.2} /></div>
+          <div className="planner-copy"><div className="eyebrow eyebrow-light"><Sparkles size={13} /> LOCAL KNOWLEDGE, WHEN YOU NEED IT</div><h2>Ask the guide<br /><em>who knows north.</em></h2></div>
+          <p>Get thoughtful answers about destinations, routes and the details that make a journey easier.</p>
+          <Link className="button button-light" href="/assistant">Ask Rahnuma <MoveUpRight size={16} /></Link>
+          <div className="planner-number">02<span> / 03</span></div>
         </section>
 
         <footer className="site-footer">

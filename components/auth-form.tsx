@@ -1,11 +1,9 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import { useRouter } from "next/navigation";
 import { ArrowRight, LoaderCircle } from "lucide-react";
 
 export function AuthForm({ mode }: { mode: "login" | "register" }) {
-  const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const isRegister = mode === "register";
@@ -27,8 +25,7 @@ export function AuthForm({ mode }: { mode: "login" | "register" }) {
       return;
     }
     window.dispatchEvent(new Event("rehnuma-auth-change"));
-    router.push("/assistant");
-    router.refresh();
+    window.location.assign("/assistant");
   }
 
   return <form className="auth-form" onSubmit={submit}>

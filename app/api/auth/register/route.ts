@@ -18,15 +18,19 @@ export async function POST(request: Request) {
     await ensureSchema();
     const { name, email, password } = parsed.data;
     const normalizedEmail = email.toLowerCase();
-    const existing = await getSql()`SELECT id FROM app_users WHERE email = ${normalizedEmail} LIMIT 1`;
-    if (existing.length) return NextResponse.json({ error: "An account with this email already exists." }, { status: 409 });
-
     const id = randomUUID();
     const passwordHash = await hash(password, 12);
-    await getSql()`INSERT INTO app_users (id, name, email, password_hash) VALUES (${id}, ${name}, ${normalizedEmail}, ${passwordHash})`;
+    const inserted = await getSql()`INSERT INTO app_users (id, name, email, password_hash)
+      VALUES (${id}, ${name}, ${normalizedEmail}, ${passwordHash})
+      ON CONFLICT(email) DO NOTHING
+      RETURNING id`;
+    if (!inserted.length) return NextResponse.json({ error: "An account with this email already exists." }, { status: 409 });
     return NextResponse.json({ ok: true }, { status: 201 });
   } catch (error) {
     console.error("Registration failed:", error);
+    if (error instanceof Error && error.message.includes("Set DATABASE_URL")) {
+      return NextResponse.json({ error: "Account storage is not configured. Add DATABASE_URL in the Vercel project environment and redeploy." }, { status: 503 });
+    }
     return NextResponse.json({ error: "Registration is temporarily unavailable. Please try again later." }, { status: 503 });
   }
 }

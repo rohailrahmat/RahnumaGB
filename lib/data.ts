@@ -9,6 +9,8 @@ export const tripOrigins = [
   { id: "gilgit", name: "Gilgit City", lat: 35.92, lng: 74.31 },
   { id: "skardu", name: "Skardu", lat: 35.30, lng: 75.63 },
   { id: "hunza", name: "Hunza", lat: 36.32, lng: 74.66 },
+  { id: "yasin", name: "Yasin Valley", lat: 36.37758437, lng: 73.33364387 },
+  { id: "ishkoman", name: "Ishkoman Valley", lat: 36.50889098, lng: 73.92128426 },
 ] as const;
 
 export const destinationImages: Record<string, string> = {

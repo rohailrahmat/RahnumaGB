@@ -1,0 +1,134 @@
+[
+  {
+    "id": "gb-overview",
+    "dest": "hunza",
+    "section": "regional-overview",
+    "title": "Gilgit-Baltistan: regional overview",
+    "keywords": ["Gilgit-Baltistan", "GB", "districts", "Karakoram", "Himalaya", "Hindu Kush", "Pamir", "culture", "languages"],
+    "text": "The Gilgit-Baltistan Tourism Department describes the region as a sparsely populated high-mountain area spanning the Karakoram, Himalaya and Hindu Kush systems. Its communities are diverse in language, religion and ethnicity; avoid treating the region as culturally uniform. The official portal organizes visitor information across ten districts: Gilgit, Ghizer, Nagar, Hunza, Skardu, Shigar, Kharmang, Ghanche, Astore and Diamer. Official destination pages and trip resources: https://e-tourism.visitgilgitbaltistan.gov.pk/.",
+    "source_url": "https://e-tourism.visitgilgitbaltistan.gov.pk/",
+    "source_label": "Gilgit-Baltistan Tourism Department",
+    "checked_on": "2026-10-17"
+  },
+  {
+    "id": "yasin-valley-official",
+    "dest": "yasin",
+    "section": "official-destination",
+    "title": "Yasin Valley",
+    "keywords": ["Yasin", "Yaseen", "Ghizer", "Hundur", "Lalak Jan", "Darkot", "river", "valley", "culture", "history", "spring", "autumn"],
+    "text": "The official tourism reference locates Yasin Valley in Ghizer District at approximately 36.3776, 73.3336. Its guide describes a rural mountain valley with fruit-growing settlements, rivers and pastures, and highlights the memorial to Havaldar Lalak Jan in Hundur. Spring blossom, summer greenery and autumn colour are seasonal landscape features described by the portal. Exact memorial access and current road conditions should be confirmed locally; do not use the valley reference coordinate as an attraction entrance. Source: https://e-tourism.visitgilgitbaltistan.gov.pk/tourist-destinations/yasin-valley.",
+    "source_url": "https://e-tourism.visitgilgitbaltistan.gov.pk/tourist-destinations/yasin-valley",
+    "source_label": "Official Yasin Valley guide",
+    "checked_on": "2026-10-17"
+  },
+  {
+    "id": "ishkoman-valley-official",
+    "dest": "ishkoman",
+    "section": "official-destination",
+    "title": "Ishkoman Valley",
+    "keywords": ["Ishkoman", "Ghizer", "Gahkuch", "Karambar", "Chitral", "Pamir", "Hindu Kush", "valley", "trekking", "lake"],
+    "text": "The official tourism page locates Ishkoman in Ghizer District, about 120 km west of Gilgit, at a reference point near 36.5089, 73.9213. It describes a long mountain valley of settlements, farmland, glacial streams and high country. The department estimates around three to four hours by road from Gilgit to the valley, but this is not a live journey time. Seasonal trekking connections toward Upper Chitral are weather- and access-dependent. Its travel advice includes checking road and weather conditions, travelling in daylight where possible, taking a knowledgeable local driver or guide, keeping away from fast water, and asking permission before entering homes, orchards or farmland. Confirm all access and services locally. Source: https://e-tourism.visitgilgitbaltistan.gov.pk/tourist-destinations/ishkoman-valley.",
+    "source_url": "https://e-tourism.visitgilgitbaltistan.gov.pk/tourist-destinations/ishkoman-valley",
+    "source_label": "Official Ishkoman Valley guide",
+    "checked_on": "2026-10-17"
+  },
+  {
+    "id": "bursat-valley-official",
+    "dest": "yasin",
+    "section": "official-destination",
+    "title": "Bursat Valley",
+    "keywords": ["Bursat", "Yasin", "Ghizer", "meadow", "stream", "orchard", "trek", "side valley"],
+    "text": "Bursat Valley is presented by the regional tourism department as an upper-Yasin destination in Ghizer, with mountain scenery, alpine meadows, streams, traditional settlements, orchards and walking or trekking opportunities. The portal's listed coordinate is a valley reference, not a verified entrance or trailhead. Travel-time estimates and facilities vary; ask locally about road access, guide arrangements, accommodation and supplies before setting out. Source: https://e-tourism.visitgilgitbaltistan.gov.pk/tourist-destinations/bursat-valley.",
+    "source_url": "https://e-tourism.visitgilgitbaltistan.gov.pk/tourist-destinations/bursat-valley",
+    "source_label": "Official Bursat Valley guide",
+    "checked_on": "2026-10-17"
+  },
+  {
+    "id": "darkot-pass-official",
+    "dest": "yasin",
+    "section": "official-destination",
+    "title": "Darkot Pass",
+    "keywords": ["Darkot", "Darkut", "Yasin", "Broghil", "Upper Chitral", "Hindu Kush", "pass", "trek", "glacier", "4703"],
+    "text": "The official tourism page gives Darkot Pass an elevation of approximately 4,703 m and describes it as a historic high-mountain crossing between upper Yasin in Ghizer and Broghil in Upper Chitral. It is a demanding trek, not a casual road stop. The department advises a qualified local guide; snow, weather, route access and any restrictions determine when a crossing is possible. Do not assume rescue services, mobile coverage or facilities on the route. Source: https://e-tourism.visitgilgitbaltistan.gov.pk/tourist-destinations/darkot-pass.",
+    "source_url": "https://e-tourism.visitgilgitbaltistan.gov.pk/tourist-destinations/darkot-pass",
+    "source_label": "Official Darkot Pass guide",
+    "checked_on": "2026-10-17"
+  },
+  {
+    "id": "gupis-valley-official",
+    "dest": "phander",
+    "section": "official-destination",
+    "title": "Gupis Valley",
+    "keywords": ["Gupis", "Ghizer", "Khalti Lake", "Ghizer River", "Yasin", "Ishkoman", "Phander", "Shandur", "Karambar"],
+    "text": "The official page locates Gupis in Ghizer District near 36.2289, 73.4422 and presents it as a road-connected hub for the district's western valleys. It mentions the Ghizer River, Khalti Lake, village landscapes and orchards, with onward regional destinations including Phander, Yasin and Ishkoman. Treat Gupis as a useful planning stop, not proof that onward roads are open or travel times are current. Source: https://e-tourism.visitgilgitbaltistan.gov.pk/tourist-destinations/gupis-valley.",
+    "source_url": "https://e-tourism.visitgilgitbaltistan.gov.pk/tourist-destinations/gupis-valley",
+    "source_label": "Official Gupis Valley guide",
+    "checked_on": "2026-10-17"
+  },
+  {
+    "id": "chatorkhand-official",
+    "dest": "ishkoman",
+    "section": "official-destination",
+    "title": "Chatorkhand",
+    "keywords": ["Chatorkhand", "Ishkoman", "Ghizer", "Karambar", "Darkot", "Hindu Kush", "orchard", "village"],
+    "text": "The tourism department identifies Chatorkhand as the administrative centre of Tehsil Ishkoman in Ghizer District, around 115 km west of Gilgit according to its guide. It is described as a gateway toward the upper Ishkoman region, with mountain scenery, streams, orchards and nearby high-country routes. Distance is not a travel-time promise; verify current road access and services before travel. Source: https://e-tourism.visitgilgitbaltistan.gov.pk/tourist-destinations/chatorkhand-valley.",
+    "source_url": "https://e-tourism.visitgilgitbaltistan.gov.pk/tourist-destinations/chatorkhand-valley",
+    "source_label": "Official Chatorkhand Valley guide",
+    "checked_on": "2026-10-17"
+  },
+  {
+    "id": "punial-valley-official",
+    "dest": "ishkoman",
+    "section": "official-destination",
+    "title": "Punial Valley",
+    "keywords": ["Punial", "Ghizer", "Gahkuch", "Sherqila", "Sher Qila", "Singul", "Singal", "orchards", "river"],
+    "text": "The official tourism guide describes Punial as a relatively accessible valley along the Gilgit-Ghizer road, with agricultural settlements, orchards, river scenery and mountain views. It lists Gahkuch, Sherqila, Singul, Ghulapur, Hatoon, Bubur, Kachi, Damas, Hayuli and Golodas among settlements associated with the valley. Confirm local spellings, access and visitor arrangements with residents. Source: https://e-tourism.visitgilgitbaltistan.gov.pk/tourist-destinations/punial-valley.",
+    "source_url": "https://e-tourism.visitgilgitbaltistan.gov.pk/tourist-destinations/punial-valley",
+    "source_label": "Official Punial Valley guide",
+    "checked_on": "2026-10-17"
+  },
+  {
+    "id": "manthokha-waterfall-official",
+    "dest": "skardu",
+    "section": "official-destination",
+    "title": "Manthokha Waterfall",
+    "keywords": ["Manthokha", "Kharmang", "waterfall", "Baltistan", "Skardu", "trout", "pasture"],
+    "text": "The regional tourism department places Manthokha Waterfall in Kharmang District near 35.0667, 75.9947. Its guide describes a waterfall of roughly 55 m in a mountain and pasture setting and mentions nearby trout-farming activity. The listed coordinate is a reference point; check current road conditions, site access and facilities before visiting. Source: https://e-tourism.visitgilgitbaltistan.gov.pk/tourist-destinations/manthokha-waterfall.",
+    "source_url": "https://e-tourism.visitgilgitbaltistan.gov.pk/tourist-destinations/manthokha-waterfall",
+    "source_label": "Official Manthokha Waterfall guide",
+    "checked_on": "2026-10-17"
+  },
+  {
+    "id": "regional-culture-and-events",
+    "dest": "hunza",
+    "section": "culture-events",
+    "title": "Culture, seasonal celebrations and events",
+    "keywords": ["culture", "ritual", "rituals", "custom", "tradition", "festival", "event", "Navroz", "Nowruz", "Ginani", "Shandur", "polo", "winter sports"],
+    "text": "The Tourism Department's regional overview emphasizes that communities across Gilgit-Baltistan differ in language, religion and ethnicity; practices should be described in their local context rather than generalized. Its events portal highlights Navroz and Ginani as seasonal celebrations, Shandur Polo Festival, and winter sports events. Dates, venues and public access can change by year and community, so check the current official calendar and follow host-community guidance. Source: https://e-tourism.visitgilgitbaltistan.gov.pk/festivals-and-events.",
+    "source_url": "https://e-tourism.visitgilgitbaltistan.gov.pk/festivals-and-events",
+    "source_label": "Official festivals and events",
+    "checked_on": "2026-10-17"
+  },
+  {
+    "id": "responsible-travel-advice",
+    "dest": "yasin",
+    "section": "responsible-travel",
+    "title": "Mountain travel and community etiquette",
+    "keywords": ["safety", "road", "weather", "river", "guide", "permission", "photography", "waste", "customs", "responsible", "travel"],
+    "text": "Destination-specific advisories on the official Ishkoman guide recommend checking weather and road conditions, preferring daylight driving on mountain roads, using a capable local driver or guide where appropriate, carrying essentials, and keeping away from fast-flowing water and steep terrain. Visitors should ask permission before entering private homes, orchards or farmland, respect local customs, avoid photographing people without consent, and take all waste away. High-altitude routes need separate preparation and local condition checks; general sightseeing advice does not make a strenuous trek safe. Source: https://e-tourism.visitgilgitbaltistan.gov.pk/tourist-destinations/ishkoman-valley.",
+    "source_url": "https://e-tourism.visitgilgitbaltistan.gov.pk/tourist-destinations/ishkoman-valley",
+    "source_label": "Official Ishkoman travel advisory",
+    "checked_on": "2026-10-17"
+  },
+  {
+    "id": "official-live-travel-information",
+    "dest": "skardu",
+    "section": "live-travel-information",
+    "title": "Live weather, advisories and visitor services",
+    "keywords": ["weather", "forecast", "current", "today", "road", "closure", "advisory", "emergency", "police", "hospital", "operator", "hotel", "licensed", "currency"],
+    "text": "For current weather, road advisories, emergency contacts, licensed tour operators, licensed accommodation and currency information, use the Tourism Department's live travel pages. These pages can change; this knowledge file does not contain live readings, emergency numbers, road closures, hotel availability or exchange rates. Weather: https://e-tourism.visitgilgitbaltistan.gov.pk/plan-trip/weather. Travel updates: https://e-tourism.visitgilgitbaltistan.gov.pk/plan-trip/news-and-updates. Emergency contacts: https://e-tourism.visitgilgitbaltistan.gov.pk/plan-trip/emergency. Operators: https://e-tourism.visitgilgitbaltistan.gov.pk/plan-trip/operators. Hotels: https://e-tourism.visitgilgitbaltistan.gov.pk/plan-trip/hotels-and-resorts. Currency: https://e-tourism.visitgilgitbaltistan.gov.pk/plan-trip/currency.",
+    "source_url": "https://e-tourism.visitgilgitbaltistan.gov.pk/plan-trip",
+    "source_label": "Official Plan Your Trip portal",
+    "checked_on": "2026-10-17"
+  }
+]

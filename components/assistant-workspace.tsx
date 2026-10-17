@@ -27,17 +27,34 @@ export function AssistantWorkspace({ userName }: { userName: string }) {
   const endRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    fetch("/api/sessions").then((response) => response.ok ? response.json() : []).then((data: Session[]) => {
+    let cancelled = false;
+    fetch("/api/sessions").then((response) => {
+      if (!response.ok) throw new Error("Conversations request failed.");
+      return response.json();
+    }).then((data: Session[]) => {
+      if (cancelled) return;
       setSessions(data);
       if (data[0]) setActiveId(data[0].id);
-    }).catch(() => setError("Your conversations couldn’t be loaded."));
+    }).catch(() => {
+      if (!cancelled) setError("Your conversations couldn’t be loaded.");
+    });
+    return () => { cancelled = true; };
   }, []);
 
   useEffect(() => {
-    if (!activeId) return;
-    fetch(`/api/sessions/${activeId}`).then((response) => response.ok ? response.json() : null).then((data) => {
-      if (data?.messages) setMessages(data.messages as ChatMessage[]);
-    }).catch(() => setError("This conversation couldn’t be opened."));
+    if (!activeId) {
+      setMessages([]);
+      return;
+    }
+    const controller = new AbortController();
+    setMessages([]);
+    fetch(`/api/sessions/${activeId}`, { signal: controller.signal }).then((response) => response.ok ? response.json() : Promise.reject(new Error("Conversation request failed."))).then((data) => {
+      setMessages(data.messages as ChatMessage[]);
+    }).catch((error: unknown) => {
+      if (error instanceof Error && error.name === "AbortError") return;
+      setError("This conversation couldn’t be opened.");
+    });
+    return () => controller.abort();
   }, [activeId]);
 
   useEffect(() => { endRef.current?.scrollIntoView({ behavior: "smooth", block: "end" }); }, [messages, busy]);
@@ -46,27 +63,21 @@ export function AssistantWorkspace({ userName }: { userName: string }) {
     event?.preventDefault();
     const prompt = value.trim();
     if (!prompt || busy) return;
+    const messageId = crypto.randomUUID();
     setQuestion("");
     setError("");
-    setMessages((current) => [...current, { role: "user", content: prompt, id: crypto.randomUUID() }]);
+    setMessages((current) => [...current, { role: "user", content: prompt, id: messageId }]);
     setBusy(true);
-    let sessionId = activeId;
-    if (!sessionId) {
-      const created = await fetch("/api/sessions", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ title: prompt.slice(0, 50) }) }).catch(() => null);
-      const session = await created?.json().catch(() => null);
-      if (!created?.ok) {
-        setError(session?.error || "Couldn’t start a conversation.");
-        setBusy(false);
-        return;
-      }
-      sessionId = session.id;
-      setActiveId(sessionId);
-      setSessions((current) => [session, ...current]);
-    }
-    const response = await fetch("/api/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ q: prompt, session_id: sessionId }) }).catch(() => null);
+    const response = await fetch("/api/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ q: prompt, ...(activeId ? { session_id: activeId } : {}) }) }).catch(() => null);
     const result = await response?.json().catch(() => ({}));
-    if (!response?.ok) setError(result?.error || "Rahnuma couldn’t answer just now.");
-    else setMessages((current) => [...current, { role: "assistant", content: result.text, sources: result.sources, id: crypto.randomUUID() }]);
+    if (!response?.ok) {
+      setMessages((current) => current.filter((message) => message.id !== messageId));
+      setError(result?.error || "Rahnuma couldn’t answer just now.");
+    }
+    else {
+      setMessages((current) => [...current, { role: "assistant", content: result.text, sources: result.sources, id: crypto.randomUUID() }]);
+      if (!activeId && result.session_id) setActiveId(result.session_id);
+    }
     setBusy(false);
     fetch("/api/sessions").then((item) => item.ok ? item.json() : []).then(setSessions).catch(() => undefined);
   }
@@ -84,7 +95,11 @@ export function AssistantWorkspace({ userName }: { userName: string }) {
   }
 
   async function removeSession(id: string) {
-    await fetch(`/api/sessions/${id}`, { method: "DELETE" });
+    const response = await fetch(`/api/sessions/${id}`, { method: "DELETE" }).catch(() => null);
+    if (!response?.ok) {
+      setError("This conversation couldn’t be deleted. Please try again.");
+      return;
+    }
     const nextSessions = sessions.filter((session) => session.id !== id);
     setSessions(nextSessions);
     if (activeId === id) {
@@ -103,9 +118,9 @@ export function AssistantWorkspace({ userName }: { userName: string }) {
   return <div className="assistant-shell">
     <aside className="assistant-sidebar">
       <Link className="assistant-brand" href="/"><Image className="brand-mark" src="/static/rehnuma-mark.webp?v=2" alt="" width={32} height={32} unoptimized /><span className="brand-copy"><strong>RAHNUMA</strong><small>YOUR FIELD GUIDE</small></span></Link>
-      <button className="new-chat-button" onClick={newConversation}><MessageSquarePlus size={16} /> New conversation <span>+</span></button>
+      <button className="new-chat-button" disabled={busy} onClick={newConversation}><MessageSquarePlus size={16} /> New conversation <span>+</span></button>
       <div className="session-list-label">RECENT CONVERSATIONS</div>
-      <div className="session-list">{sessions.map((session) => <div className={`session-item${activeId === session.id ? " active" : ""}`} key={session.id}><button onClick={() => selectSession(session.id)}>{session.title}</button><button className="session-delete" aria-label={`Delete ${session.title}`} onClick={() => removeSession(session.id)}><Trash2 size={14} /></button></div>)}</div>
+      <div className="session-list">{sessions.map((session) => <div className={`session-item${activeId === session.id ? " active" : ""}`} key={session.id}><button disabled={busy} onClick={() => selectSession(session.id)}>{session.title}</button><button className="session-delete" disabled={busy} aria-label={`Delete ${session.title}`} onClick={() => removeSession(session.id)}><Trash2 size={14} /></button></div>)}</div>
       <div className="assistant-sidebar-bottom"><Link href="/destinations">Explore places <ArrowUpRight size={14} /></Link><button onClick={signOut}>{userName} <span>Sign out</span></button></div>
     </aside>
     <section className="assistant-main">
@@ -146,7 +161,9 @@ export function AssistantWorkspace({ userName }: { userName: string }) {
                       ))}
                     </div>
                   )}
-                  {message.sources?.length ? <div className="source-links">{message.sources.slice(0, 3).map((source) => <Link key={`${source.dest}-${source.section}`} href={`/destinations/${source.dest}`}>{source.label} <ArrowUpRight size={12} /></Link>)}</div> : null}
+                  {message.sources?.length ? <div className="source-links">{message.sources.slice(0, 3).map((source) => source.url
+                    ? <a key={`${source.url}-${source.section}`} href={source.url} target="_blank" rel="noreferrer">{source.label} <ArrowUpRight size={12} /></a>
+                    : <Link key={`${source.dest}-${source.section}`} href={`/destinations/${source.dest}`}>{source.label} <ArrowUpRight size={12} /></Link>)}</div> : null}
                 </div>
               </article>
             );

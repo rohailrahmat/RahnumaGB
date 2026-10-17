@@ -15,7 +15,7 @@ export default async function AccountPage() {
   const user = await getCurrentUser();
   if (!user) redirect("/login");
   await ensureSchema();
-  await getSql()`INSERT OR IGNORE INTO user_preferences (user_id) VALUES (${String(user.id)})`;
+  await getSql()`INSERT INTO user_preferences (user_id) VALUES (${String(user.id)}) ON CONFLICT(user_id) DO NOTHING`;
   const rows = await getSql()`SELECT trip_updates, safety_alerts FROM user_preferences WHERE user_id = ${String(user.id)} LIMIT 1`;
 
   return (

@@ -3,7 +3,6 @@ import { hash } from "bcryptjs";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { ensureSchema, getSql } from "@/lib/db";
-import { SESSION_COOKIE, sessionCookieOptions, signInToken } from "@/lib/auth";
 
 const registrationSchema = z.object({
   name: z.string().trim().min(2).max(80),
@@ -24,13 +23,10 @@ export async function POST(request: Request) {
 
     const id = randomUUID();
     const passwordHash = await hash(password, 12);
-    const users = await getSql()`INSERT INTO app_users (id, name, email, password_hash) VALUES (${id}, ${name}, ${normalizedEmail}, ${passwordHash}) RETURNING id, name, email`;
-    const token = await signInToken(id);
-    const response = NextResponse.json({ user: users[0] }, { status: 201 });
-    response.cookies.set(SESSION_COOKIE, token, sessionCookieOptions);
-    return response;
+    await getSql()`INSERT INTO app_users (id, name, email, password_hash) VALUES (${id}, ${name}, ${normalizedEmail}, ${passwordHash})`;
+    return NextResponse.json({ ok: true }, { status: 201 });
   } catch (error) {
     console.error("Registration failed:", error);
-    return NextResponse.json({ error: error instanceof Error ? error.message : "Registration could not be completed." }, { status: 503 });
+    return NextResponse.json({ error: "Registration is temporarily unavailable. Please try again later." }, { status: 503 });
   }
 }

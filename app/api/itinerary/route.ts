@@ -14,13 +14,13 @@ const itinerarySchema = z.object({
 });
 
 export async function POST(request: Request) {
-  if (!(await getCurrentUser())) return NextResponse.json({ error: "Sign in to build a trip plan." }, { status: 401 });
   const parsed = itinerarySchema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ error: "Add a duration, budget and a few interests." }, { status: 400 });
   try {
+    if (!(await getCurrentUser())) return NextResponse.json({ error: "Sign in to build a trip plan." }, { status: 401 });
     return NextResponse.json(await createItinerary(parsed.data.days, parsed.data.budget, parsed.data.interests, parsed.data.startLocation));
   } catch (error) {
     console.error("Itinerary request failed:", error);
-    return NextResponse.json({ error: error instanceof Error ? error.message : "The planner is unavailable right now." }, { status: 503 });
+    return NextResponse.json({ error: "The trip planner is temporarily unavailable. Please try again later." }, { status: 503 });
   }
 }

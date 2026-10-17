@@ -1,66 +1,58 @@
 import Database from "better-sqlite3";
+import { neon } from "@neondatabase/serverless";
 import { join } from "node:path";
+import { createSchemaStatements } from "@/lib/db-schema.mjs";
 
-type DatabaseSql = (strings: TemplateStringsArray, ...values: unknown[]) => Record<string, unknown>[];
+type DatabaseSql = (strings: TemplateStringsArray, ...values: unknown[]) => Promise<Record<string, unknown>[]>;
 
 let client: DatabaseSql | undefined;
 let schemaPromise: Promise<void> | undefined;
 
 export function getSql() {
-  client ??= createSqliteAdapter();
+  if (!client) {
+    const connectionString = process.env.DATABASE_URL;
+    if (!connectionString && process.env.VERCEL) {
+      throw new Error("Set DATABASE_URL to a persistent PostgreSQL database in the Vercel project environment.");
+    }
+    client = connectionString ? createNeonAdapter(connectionString) : createSqliteAdapter();
+  }
   return client;
+}
+
+function createNeonAdapter(connectionString: string): DatabaseSql {
+  const sql = neon(connectionString);
+  return async (strings, ...values) => sql(strings, ...values);
 }
 
 function createSqliteAdapter(): DatabaseSql {
   const databasePath = process.env.DATABASE_PATH || join(
-    process.env.VERCEL ? "/tmp" : join(process.cwd(), "data"),
+    process.cwd(),
+    "data",
     "rehnuma.sqlite",
   );
   const database = new Database(databasePath);
   database.pragma("foreign_keys = ON");
 
-  return (strings, ...values) => {
+  return async (strings, ...values) => {
     const statementText = strings.reduce((query, part, index) => query + (index ? `?${part}` : part), "");
     const statement = database.prepare(statementText);
-    if (statement.reader) return statement.all(...(values as never[])) as Record<string, unknown>[];
-    statement.run(...(values as never[]));
+    const sqliteValues = values.map((value) => typeof value === "boolean" ? Number(value) : value);
+    if (statement.reader) return statement.all(...(sqliteValues as never[])) as Record<string, unknown>[];
+    statement.run(...(sqliteValues as never[]));
     return [];
   };
 }
 
 export async function ensureSchema() {
-  if (!schemaPromise) schemaPromise = createSchema(getSql());
+  if (!schemaPromise) {
+    schemaPromise = createSchema(getSql()).catch((error: unknown) => {
+      schemaPromise = undefined;
+      throw error;
+    });
+  }
   return schemaPromise;
 }
 
 async function createSchema(sql: DatabaseSql) {
-  await sql`CREATE TABLE IF NOT EXISTS app_users (
-    id text PRIMARY KEY,
-    name text NOT NULL,
-    email text NOT NULL UNIQUE,
-    password_hash text NOT NULL,
-    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
-  )`;
-  await sql`CREATE TABLE IF NOT EXISTS user_preferences (
-    user_id text PRIMARY KEY REFERENCES app_users(id) ON DELETE CASCADE,
-    trip_updates INTEGER NOT NULL DEFAULT 1,
-    safety_alerts INTEGER NOT NULL DEFAULT 1
-  )`;
-  await sql`CREATE TABLE IF NOT EXISTS chat_sessions (
-    id text PRIMARY KEY,
-    user_id text NOT NULL REFERENCES app_users(id) ON DELETE CASCADE,
-    title text NOT NULL DEFAULT 'New journey',
-    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
-  )`;
-  await sql`CREATE TABLE IF NOT EXISTS chat_messages (
-    id text PRIMARY KEY,
-    session_id text NOT NULL REFERENCES chat_sessions(id) ON DELETE CASCADE,
-    role text NOT NULL CHECK (role IN ('user', 'assistant')),
-    content text NOT NULL,
-    sources TEXT NOT NULL DEFAULT '[]',
-    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
-  )`;
-  await sql`CREATE INDEX IF NOT EXISTS chat_sessions_user_updated_idx ON chat_sessions(user_id, updated_at DESC)`;
-  await sql`CREATE INDEX IF NOT EXISTS chat_messages_session_idx ON chat_messages(session_id, created_at)`;
+  for (const statement of createSchemaStatements(sql)) await statement;
 }

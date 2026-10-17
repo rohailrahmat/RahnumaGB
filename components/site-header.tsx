@@ -12,6 +12,7 @@ const links = [
   { href: "/destinations", label: "Places" },
   { href: "/guides", label: "Local guides" },
   { href: "/planner", label: "Trip planner" },
+  { href: "/travel-desk", label: "Travel desk" },
 ];
 
 export function SiteHeader() {

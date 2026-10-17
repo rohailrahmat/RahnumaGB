@@ -86,6 +86,14 @@ export default function HomePage() {
           <div className="planner-number">02<span> / 03</span></div>
         </section>
 
+        <section className="planner-band travel-desk-home-band page-width">
+          <div className="planner-mark"><MapPin size={32} strokeWidth={1.2} /></div>
+          <div className="planner-copy"><div className="eyebrow eyebrow-light"><Sparkles size={13} /> THE DETAILS BEFORE YOU GO</div><h2>Travel prepared.<br /><em>Arrive curious.</em></h2></div>
+          <p>Check regional forecasts and reach official travel updates, emergency resources and visitor services in one place.</p>
+          <Link className="button button-light" href="/travel-desk">Open travel desk <MoveUpRight size={16} /></Link>
+          <div className="planner-number">03<span> / 03</span></div>
+        </section>
+
         <footer className="site-footer">
           <div className="footer-inner page-width">
             <div className="footer-brand">
@@ -96,7 +104,7 @@ export default function HomePage() {
               <p>Local knowledge for the landscapes that stay with you. Made with respect for the mountains and the people who call them home.</p>
             </div>
             <nav className="footer-links" aria-label="Explore Rahnuma">
-              <div><strong>Explore</strong><Link href="/destinations">Destinations</Link><Link href="/guides">Local guides</Link><Link href="/planner">Trip planner</Link></div>
+              <div><strong>Explore</strong><Link href="/destinations">Destinations</Link><Link href="/guides">Local guides</Link><Link href="/planner">Trip planner</Link><Link href="/travel-desk">Travel desk</Link></div>
               <div><strong>Your journey</strong><Link href="/assistant">Ask Rahnuma</Link><Link href="/login">Sign in</Link><Link href="/register">Create an account</Link></div>
             </nav>
             <div className="footer-bottom">

@@ -27,6 +27,6 @@ export async function POST(request: Request) {
     return response;
   } catch (error) {
     console.error("Login failed:", error);
-    return NextResponse.json({ error: error instanceof Error ? error.message : "Sign in could not be completed." }, { status: 503 });
+    return NextResponse.json({ error: "Sign in is temporarily unavailable. Please try again later." }, { status: 503 });
   }
 }

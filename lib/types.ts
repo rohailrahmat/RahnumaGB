@@ -41,6 +41,6 @@ export type ChatMessage = {
   id?: string;
   role: "user" | "assistant";
   content: string;
-  sources?: Array<{ dest: string; section: string; label: string }>;
+  sources?: Array<{ dest: string; section: string; label: string; url?: string }>;
   created_at?: string;
 };

@@ -10,7 +10,7 @@ const accountUpdateSchema = z.object({
 }).refine((value) => Object.values(value).some((entry) => entry !== undefined));
 
 async function getPreferences(userId: string) {
-  await getSql()`INSERT OR IGNORE INTO user_preferences (user_id) VALUES (${userId})`;
+  await getSql()`INSERT INTO user_preferences (user_id) VALUES (${userId}) ON CONFLICT(user_id) DO NOTHING`;
   const rows = await getSql()`SELECT trip_updates, safety_alerts FROM user_preferences WHERE user_id = ${userId} LIMIT 1`;
   return {
     tripUpdates: Boolean(rows[0]?.trip_updates),
@@ -32,13 +32,12 @@ export async function GET() {
 }
 
 export async function PATCH(request: Request) {
-  const user = await getCurrentUser();
-  if (!user) return NextResponse.json({ error: "Sign in to update your account." }, { status: 401 });
-
   const parsed = accountUpdateSchema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ error: "Check your name and notification preferences." }, { status: 400 });
 
   try {
+    const user = await getCurrentUser();
+    if (!user) return NextResponse.json({ error: "Sign in to update your account." }, { status: 401 });
     await ensureSchema();
     const userId = String(user.id);
     const { name, tripUpdates, safetyAlerts } = parsed.data;
@@ -48,7 +47,7 @@ export async function PATCH(request: Request) {
       const nextTripUpdates = tripUpdates ?? current.tripUpdates;
       const nextSafetyAlerts = safetyAlerts ?? current.safetyAlerts;
       await getSql()`INSERT INTO user_preferences (user_id, trip_updates, safety_alerts)
-        VALUES (${userId}, ${nextTripUpdates ? 1 : 0}, ${nextSafetyAlerts ? 1 : 0})
+        VALUES (${userId}, ${nextTripUpdates}, ${nextSafetyAlerts})
         ON CONFLICT(user_id) DO UPDATE SET trip_updates = excluded.trip_updates, safety_alerts = excluded.safety_alerts`;
     }
     const updatedUsers = await getSql()`SELECT id, name, email, created_at FROM app_users WHERE id = ${userId} LIMIT 1`;

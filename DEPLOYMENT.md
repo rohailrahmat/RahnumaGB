@@ -4,7 +4,7 @@ Next.js App Router travel guide for Gilgit-Baltistan. The frontend, route handle
 
 ## Local development
 
-1. Install dependencies with `npm install`.
+1. Install locked dependencies with `npm ci`.
 2. Copy `.env.example` to `.env.local` and set `GEMINI_API_KEY`.
 3. Run `npm run dev`.
 4. Open `http://localhost:3000`.
@@ -21,6 +21,11 @@ Add these environment variables in the Vercel project settings for Production, P
 
 - `GEMINI_API_KEY`: Google AI Studio API key used for embeddings and answers.
 - `SESSION_SECRET`: A stable, randomly generated secret used to sign login sessions.
+- `DATABASE_URL`: Neon PostgreSQL connection string. User accounts and conversations require this persistent shared database.
 - `NEXT_PUBLIC_SITE_URL` (optional): The canonical HTTPS URL for the production site, used by metadata and the sitemap. Vercel's deployment URL is used when this is unset.
 
-Redeploy after adding or changing environment variables. `data/index.json` is included in the repository and used for semantic retrieval. The SQLite database runs from `/tmp` on Vercel, so user accounts and conversations are temporary there; use persistent hosted storage before production use with multiple serverless instances.
+`DATABASE_URL` and `SESSION_SECRET` are required for account and conversation features in production. Generate a unique session secret locally; do not use a value shared in chat or committed to Git. Missing settings prevent authenticated features from working. Redeploy after adding or changing environment variables. `data/index.json` is included in the repository and used for semantic retrieval. The app initializes its PostgreSQL schema automatically. Local development uses SQLite unless `DATABASE_URL` is set. Existing local SQLite accounts and conversations are not copied to Neon automatically.
+
+### Copying existing local data to Neon
+
+Back up `data/rehnuma.sqlite` first. With `DATABASE_URL` set to the Neon database, run `npm run migrate:neon` to review source row counts without changing either database. Run `npm run migrate:neon -- --execute` only when you are ready to copy users, password hashes, preferences, conversations, and messages. The operation is idempotent for matching record IDs and leaves the SQLite source unchanged. It does not transfer plaintext passwords.

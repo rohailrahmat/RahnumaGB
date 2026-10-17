@@ -10,8 +10,8 @@ const SESSION_AGE = 60 * 60 * 24 * 30;
 
 function secretKey() {
   const secret = process.env.SESSION_SECRET;
-  if (!secret && process.env.VERCEL) {
-    throw new Error("Set SESSION_SECRET in the Vercel project environment.");
+  if (!secret && (process.env.NODE_ENV === "production" || process.env.DATABASE_URL)) {
+    throw new Error("Set SESSION_SECRET in the deployment environment.");
   }
   return new TextEncoder().encode(secret || localSessionSecret());
 }
